@@ -1,0 +1,127 @@
+{Задание 11
+Из последовательности чисел, записанных в текстовом файле, построить бинарное дерево поиска. 
+Определить, является ли полученное дерево АВЛ-сбалансированным 
+(для каждого его узла высота его двух поддеревьев различается не более, чем на 1).
+Задание 8
+Определить сумму значений узлов из самой короткой ветки дерева.
+Задание 1
+Определить является ли построенное дерево полным.
+(Законченное бинарное дерево, содержащее 2N узлов на уровне N, является полным)}
+
+program lab4;
+
+type
+  Pt = ^Tree;
+  Tree = record
+    Digit: integer;
+    HeadL: Pt;
+    HeadR: Pt; 
+  end;
+
+procedure Creation(var root: Pt; a: integer);//создение дерева
+begin
+  if Root = nil then
+  begin
+    new(Root); 
+    Root^.Digit := a;
+    Root^.HeadL := nil;
+    Root^.HeadR := nil;
+  end
+  else
+  if a < Root^.Digit then
+    Creation(Root^.HeadL, a)
+  else
+    Creation(Root^.HeadR, a);
+end;
+
+procedure Print(Root: Pt; ots: integer);//вывод дерева, переменная ots нужна для формирования отступов
+
+begin
+  if Root <> nil then
+  begin
+    Print(Root^.HeadR, ots + 3);
+    writeln(' ': ots, Root^.Digit);
+    Print(Root^.HeadL, ots + 3);
+  end;
+end;
+
+function Gl(root: Pt): integer;//нахождение глубины дерева
+var
+  l, p: integer;
+begin
+  if root = nil then
+    result := 0;
+  if root <> nil then
+  begin
+    l := Gl(Root^.HeadL);
+    p := Gl(Root^.HeadR);
+    if l > p then
+      Result := l + 1
+    else 
+      Result := p + 1;
+  end;
+end;
+
+function put(root: Pt): string;
+begin
+  if root <> nil then
+  begin
+    if (Gl(root^.HeadL) < Gl(root^.HeadR)) then
+      Result := IntToStr(root^.digit) + put(root^.HeadL)
+    else
+      Result := IntToStr(root^.digit) + put(root^.Headr)
+  end
+  else 
+      Result := '';
+end;
+
+procedure obhod(root: Pt; var o:integer);
+begin
+  if root <> nil then
+  begin
+    obhod(root^.HeadL,o);
+    obhod(root^.HeadR,o);
+    if ((root^.HeadL <> nil) and (root^.HeadR <> nil)) or ((root^.HeadL = nil) and (root^.HeadR = nil)) then
+      o:=o+0
+    else
+      o:=o+1
+  end;
+end;
+
+var
+  f: text;
+  str: string;
+  a, ots, z, o: integer;
+  root, p: Pt;
+
+begin
+  
+  readln( str);
+  for var i := 1 to length(str) do
+  begin
+    a := Strtoint(str[i]);
+    Creation(root, a);
+  end;
+  writeln('Дерево:');
+  writeln;
+  Print(Root, ots);
+  if abs(Gl(root^.HeadL) - Gl(root^.HeadR)) > 1 then 
+    writeln('Дерево не сбалансировано')
+  else
+    writeln('Дерево сбалансировано');
+  writeln;
+  write('Самая короткая векта дерева:');
+  writeln(put(root));
+  writeln;
+  write('Сумма значений узлов из самой короткой ветки дерева:');
+  for var i := 1 to length(put(root)) do
+    z := z + strtoint(put(root)[i]);
+  write(' ', z);
+  obhod(root,o);
+  writeln;
+  writeln;
+  if o = 0 then
+    writeln('Дерево полное')
+  else
+    writeln('Дерево не полное');
+end.  
